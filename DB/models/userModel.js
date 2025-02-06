@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const asyncHandler = require('express-async-handler')
-
 
 const userSchema = new mongoose.Schema({
     name : {

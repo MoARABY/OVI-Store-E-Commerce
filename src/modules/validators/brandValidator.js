@@ -31,6 +31,9 @@ const updateBrandValidator = [
     }),
     validatorMiddleware
 ]
+const setImageUrl = (req,res,next)=>{
+    if(req.file) req.body.image = req.file.path
+    next()
+}
 
-
-module.exports = {createBrandValidator,checkIdValidator,updateBrandValidator}
+module.exports = {setImageUrl,createBrandValidator,checkIdValidator,updateBrandValidator}

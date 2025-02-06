@@ -5,7 +5,7 @@ require('dotenv').config()
 
 
 app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+app.use(express.urlencoded({ extended: true  }));
 
 const dbConnection = require('./DB/dbConnection')
 const globalError = require('./src/middlewares/errorMiddleware')

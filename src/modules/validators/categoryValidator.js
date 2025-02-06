@@ -31,4 +31,9 @@ const updateCategoryValidator = [
     }),
     validatorMiddleware
 ]
-module.exports = {createCategoryValidator,checkIdValidator,updateCategoryValidator}
+
+const setImageUrl = (req,res,next)=>{
+    if(req.file) req.body.image = req.file.path
+    next()
+}
+module.exports = {setImageUrl,createCategoryValidator,checkIdValidator,updateCategoryValidator}

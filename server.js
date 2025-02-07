@@ -17,6 +17,7 @@ const authRoute = require('./src/modules/routes/authRoute')
 const categoryRoute = require('./src/modules/routes/categoryRoute')
 const subCategoryRoute = require('./src/modules/routes/subCategoryRoute')
 const brandRoute = require('./src/modules/routes/brandRoute')
+const productRoute = require('./src/modules/routes/productRoute')
 
 
 
@@ -25,6 +26,8 @@ app.use('/api/v1/auth',authRoute)
 app.use('/api/v1/categories',categoryRoute)
 app.use('/api/v1/subCategories',subCategoryRoute)
 app.use('/api/v1/brands',brandRoute)
+app.use('/api/v1/products',productRoute)
+
 
 
 app.get('/api/v1/',(req,res)=>{

@@ -2,7 +2,6 @@ const multer = require('multer')
 const cloudinary = require('../config/cloudinaryConfig')
 const {CloudinaryStorage} = require('multer-storage-cloudinary')
 const asyncHandler = require('express-async-handler');
-const apiError = require('../utils/apiError');
 
 
 const storage = new CloudinaryStorage({

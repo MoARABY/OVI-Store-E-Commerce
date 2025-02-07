@@ -1,6 +1,6 @@
 const categoryModel = require('../../../DB/models/categoryModel')
 const asyncHandler = require('express-async-handler');
-
+const ApiFeatures = require('../../utils/apiFeatures')
 
 
 const createCategory = asyncHandler(async (req,res)=>{
@@ -15,8 +15,19 @@ const getCategory = asyncHandler(async (req,res)=>{
 })
 
 const getCategories = asyncHandler(async (req,res)=>{
-    const category = await categoryModel.find({})
-    category ? res.status(201).json(category) : res.status(400).json({msg:'no categories founded'})
+
+    const countDocuments = await categoryModel.countDocuments()
+    const apiFeatures = new ApiFeatures(req.query,categoryModel.find())
+    .filter()
+    .limitFields()
+    .sort()
+    .paginate(countDocuments)
+    .search('categoryModel')
+
+    const {mongooseQuery,paginateFeatures } = apiFeatures
+
+    const categories = await mongooseQuery
+    categories ? res.status(201).json({length:categories.length,paginateFeatures,Data:categories}) : res.status(400).json({msg:'no categories founded'})
 })
 
 const updateCategory = asyncHandler(async (req,res)=>{

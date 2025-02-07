@@ -1,6 +1,6 @@
 const subCategoryModel = require('../../../DB/models/subCategoryModel')
 const asyncHandler = require('express-async-handler')
-
+const ApiFeatures = require('../../utils/apiFeatures')
 
 
 
@@ -19,8 +19,20 @@ const getSubCategory = asyncHandler(async (req,res)=>{
 const getSubCategories = asyncHandler(async (req,res)=>{
     let filterObj = {}
     if (req.params.categoryId) filterObj = {category:req.params.categoryId}
-    const subCategory = await subCategoryModel.find(filterObj)
-    subCategory ? res.status(201).json(subCategory) : res.status(400).json({msg:'no subCategory founded'})
+
+
+    const countDocuments = await subCategoryModel.countDocuments()
+    const apiFeatures = new ApiFeatures(req.query,subCategoryModel.find(filterObj))
+    .filter()
+    .limitFields()
+    .sort()
+    .paginate(countDocuments)
+    .search('subCategoryModel')
+
+    const {mongooseQuery,paginateFeatures } = apiFeatures
+
+    const subCategories = await mongooseQuery
+    subCategories ? res.status(201).json({length:subCategories.length,paginateFeatures,Data:subCategories}) : res.status(400).json({msg:'no subCategory founded'})
 })
 
 const updateSubCategory = asyncHandler(async (req,res)=>{

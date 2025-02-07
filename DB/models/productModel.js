@@ -49,7 +49,7 @@ const productSchema = new mongoose.Schema({
     },
     subcategories: [{
         type: mongoose.Schema.ObjectId,
-        ref: 'SubCategory',
+        ref: 'subCategory',
     },
     ],
     brand: {
@@ -68,6 +68,12 @@ const productSchema = new mongoose.Schema({
 },{timestamps:true})
 
 
-
+productSchema.pre(/^find/, function (next) {
+    this.populate([
+        {path: 'category',select: 'name',},
+        {path: 'subcategories', select: 'name'},
+        {path: 'brand', select: 'name'}]);
+    next();
+});
 
 module.exports = mongoose.model('Product',productSchema)

@@ -4,7 +4,7 @@ const {createUser,getUser,getUsers,updateUser,deleteUser} = require('../controll
 const {verifyRole} = require('../../guards/isAuthorized')
 
 
-
+router.use(verifyRole('admin'))
 router.route('/').get(getUsers).post(createUserValidator,createUser)
 router.route('/:id').get(getUserValidator,getUser).put(updateUserValidator,updateUser).delete(getUserValidator,deleteUser)
 

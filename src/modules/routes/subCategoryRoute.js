@@ -5,11 +5,11 @@ const {upload} = require('../../middlewares/uploadImage')
 const router = require('express').Router({mergeParams:true})
 
 
-router.get('/',getSubCategories)
-router.post('/',setCategoryIdValue,upload.single('subCategoryImage'),setImageUrl,createSubCategoryValidator,createSubCategory)
-router.get('/:id',checkIdValidator,getSubCategory)
-router.put('/:id',updateSubCategoryValidator,updateSubCategory)
-router.delete('/:id',checkIdValidator,deleteSubCategory)
+router.get('/',verifyRole('admin','user'),getSubCategories)
+router.post('/',verifyRole('admin','manager'),setCategoryIdValue,upload.single('subCategoryImage'),setImageUrl,createSubCategoryValidator,createSubCategory)
+router.get('/:id',verifyRole('user'),checkIdValidator,getSubCategory)
+router.put('/:id',verifyRole('admin','manager'),updateSubCategoryValidator,updateSubCategory)
+router.delete('/:id',verifyRole('admin','manager'),checkIdValidator,deleteSubCategory)
 
 
 module.exports = router

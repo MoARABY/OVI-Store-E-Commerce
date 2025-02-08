@@ -1,11 +1,14 @@
 const express = require('express')
 const app = express()
+const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
 
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true  }));
+app.use(cookieParser());
+
 
 const dbConnection = require('./DB/dbConnection')
 const globalError = require('./src/middlewares/errorMiddleware')

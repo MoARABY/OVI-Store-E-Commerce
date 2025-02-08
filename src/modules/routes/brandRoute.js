@@ -5,11 +5,11 @@ const {upload} = require('../../middlewares/uploadImage')
 const router = require('express').Router()
 
 
-router.get('/',getBrands)
-router.post('/',upload.single('brandImage'),setImageUrl,createBrandValidator,createBrand)
-router.get('/:id',checkIdValidator,getBrand)
-router.put('/:id',updateBrandValidator,updateBrand)
-router.delete('/:id',checkIdValidator,deleteBrand)
+router.get('/',verifyRole('user'),getBrands)
+router.post('/',verifyRole('admin'),upload.single('brandImage'),setImageUrl,createBrandValidator,createBrand)
+router.get('/:id',verifyRole('user'),checkIdValidator,getBrand)
+router.put('/:id',verifyRole('admin','manager'),updateBrandValidator,updateBrand)
+router.delete('/:id',verifyRole('admin','manager'),checkIdValidator,deleteBrand)
 
 
 module.exports = router

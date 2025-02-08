@@ -26,7 +26,7 @@ const reviewSchema = new mongoose.Schema({
 
 
 reviewSchema.pre(/^find/,function(next){
-    this.populate({path:'userId',select:'name'},{path:'productId',select:'title'})
+    this.populate([{path:'userId',select:'name'},{path:'productId',select:'title'}])
     next()
 })
 

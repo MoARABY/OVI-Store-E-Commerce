@@ -30,7 +30,7 @@ const updateReview = asyncHandler(async(req,res)=>{
 const deleteReview = asyncHandler(async(req,res)=>{
     const {id} = req.params
     const review = await reviewModel.findByIdAndDelete(id)
-    review ? res.status(204).json('Review Deleted Successfully') : res.status(404).json('Review Not Found')
+    review ? res.status(200).json('Review Deleted Successfully') : res.status(404).json('Review Not Found')
 })
 
 

@@ -25,9 +25,21 @@ const reviewSchema = new mongoose.Schema({
 },{timestamps:true})
 
 
+
+// win you run without populate we will use userId as main field
+// win using populate it turn into {_id,name} so we will use userId._id
 reviewSchema.pre(/^find/,function(next){
     this.populate([{path:'userId',select:'name'},{path:'productId',select:'title'}])
     next()
+})
+
+reviewSchema.statics.calcAverageRatings = async function(productId){
+
+}
+
+
+reviewSchema.post('save',async function(){
+    await this.constructor.calcAverageRatings(this.productId)
 })
 
 

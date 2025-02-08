@@ -18,6 +18,7 @@ const getProduct = asyncHandler(async(req,res)=>{
 
 const getProducts = asyncHandler(async(req,res)=>{
 
+
     const countDocuments = await productModel.countDocuments()
     const apiFeatures = new ApiFeature(req.query,productModel.find())
     .filter()

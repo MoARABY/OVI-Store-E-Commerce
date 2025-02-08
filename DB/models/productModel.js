@@ -76,4 +76,21 @@ productSchema.pre(/^find/, function (next) {
     next();
 });
 
+
+productSchema.virtual('reviews',{
+    ref:'Review',
+    foreignField:'productId',
+    localField:'_id'
+})
+
+productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toObject', { virtuals: true });
+
+
+productSchema.post('findOne', async function (doc, next) {
+    if (!doc) return next();
+    await doc.populate({path: 'reviews', select: 'ratings title -productId'})
+    next();
+});
+
 module.exports = mongoose.model('Product',productSchema)

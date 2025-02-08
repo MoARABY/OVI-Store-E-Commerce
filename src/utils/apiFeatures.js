@@ -30,7 +30,7 @@ class apiFeatures {
     search(model){
         if(this.queryString.keyword){
             const keywords = this.queryString.keyword
-            if(model === 'productModel'){
+            if(model === 'productModel' || model === 'reviewModel' ){
                 this.mongooseQuery.find({$or:[
                     {title:{$regex:keywords, $options : 'i'}},
                     {description:{$regex:keywords, $options : 'i'}}]})

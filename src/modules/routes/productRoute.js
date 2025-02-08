@@ -2,6 +2,7 @@ const {createProductValidator,updateProductValidator,checkIdValidator,setImageUr
 const {verifyRole} = require('../../guards/isAuthorized')
 const {createProduct,getProduct,getProducts,updateProduct,deleteProduct} = require('../controllers/productController')
 const {upload,uploads} = require('../../middlewares/uploadImage')
+const reviewRouter = require('../routes/reviewRoute')
 const router = require('express').Router()
 
 
@@ -10,5 +11,10 @@ router.post('/',verifyRole('manager','admin'),upload.fields([{name:'images',maxC
 router.get('/:id',verifyRole('user'),checkIdValidator,getProduct)
 router.put('/:id',verifyRole('manager','admin'),updateProductValidator,updateProduct)
 router.delete('/:id',verifyRole('manager','admin'),checkIdValidator,deleteProduct)
+
+
+router.use('/:productId/reviews', reviewRouter)
+router.use('/:productId/reviews/:reviewId',reviewRouter)
+
 
 module.exports = router

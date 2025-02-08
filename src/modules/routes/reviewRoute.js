@@ -2,7 +2,7 @@ const {createReviewValidator,updateReviewValidator,deleteReviewValidator,checkId
 const {createReview,getReview,getReviews,updateReview,deleteReview} = require('../controllers/reviewController')
 const {verifyRole} = require('../../guards/isAuthorized')
 
-const router = require('express').Router()
+const router = require('express').Router({mergeParams:true})
 
 
 router.get('/',verifyRole('user','admin'),getReviews)

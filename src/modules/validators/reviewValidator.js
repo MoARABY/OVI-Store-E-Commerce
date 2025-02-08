@@ -10,7 +10,7 @@ const createReviewValidator = [
     body('ratings').notEmpty().withMessage('review must include rate')
     .isFloat({min:1,max:5}).withMessage('Invalid rate value')
 
-    ,body('productId').notEmpty().withMessage('Review productId is required')
+    ,check('productId').notEmpty().withMessage('Review productId is required')
     .isMongoId().withMessage('Invalid productId format')
     .custom(async(val)=>{
         const product =  await productModel.findById(val)

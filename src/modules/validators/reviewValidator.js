@@ -20,7 +20,6 @@ const createReviewValidator = [
     })
     .custom(async (val,{req})=>{
         const review = await reviewModel.find({productId:val,userId:req.loggedUser.userId})
-        console.log(review)
         if( review.length>0 ) {
             throw new apiError('You Have Already Reviewed This Product',400)
         }

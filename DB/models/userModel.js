@@ -37,6 +37,13 @@ const userSchema = new mongoose.Schema({
     phoneVerifyCode:String,
     phoneVerifyCodeExpires:Date,
     phoneVerifyCodeVerified :Boolean,
+    wishlist : [
+        {
+            type : mongoose.Schema.ObjectId ,
+            ref : 'Product'
+        }
+    ]
+
 
 },{timestamps:true})
 

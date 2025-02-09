@@ -23,6 +23,8 @@ const brandRoute = require('./src/modules/routes/brandRoute')
 const productRoute = require('./src/modules/routes/productRoute')
 const reviewRoute = require('./src/modules/routes/reviewRoute')
 const wishlistRoute = require('./src/modules/routes/wishlistRoute')
+const addressRoute = require('./src/modules/routes/addressRoute')
+
 
 
 
@@ -36,6 +38,8 @@ app.use('/api/v1/brands',brandRoute)
 app.use('/api/v1/products',productRoute)
 app.use('/api/v1/reviews',reviewRoute)
 app.use('/api/v1/wishlist',wishlistRoute)
+app.use('/api/v1/addresses',addressRoute)
+
 
 
 

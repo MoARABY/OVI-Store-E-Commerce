@@ -10,7 +10,7 @@ router.route('/').get(verifyRole('user'),getLoggedUserCart)
 .put(verifyRole('user'),applyCoupon)
 
 router.route('/:itemId').delete(verifyRole('user'),removeFromCartValidator,removeFromCart)
-router.route('/:id').put(verifyRole('user'),updateCart)
+.put(verifyRole('user'),updateCart)
 
 
 

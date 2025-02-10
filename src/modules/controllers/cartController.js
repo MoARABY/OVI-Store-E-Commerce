@@ -1,4 +1,3 @@
-const userModel = require('../../../DB/models/userModel')
 const cartModel = require('../../../DB/models/cartModel')
 const couponModel = require('../../../DB/models/couponModel')
 
@@ -52,11 +51,25 @@ const getLoggedUserCart = asyncHandler(async (req,res)=>{
 })
 
 const updateCart = asyncHandler(async(req,res)=>{
-    const {id} = req.params
-    
-    console.log(req.body)
-    const Cart = await cartModel.findByIdAndUpdate(id, req.body, {new: true});
-    Cart ? res.status(201).json(Cart) : res.status(400).json({message: 'Cart not found'})
+    const { quantity,color } = req.body;
+
+    const cart = await cartModel.findOne({ user: req.loggedUser.userId });
+    if (!cart) {
+        return next(new ApiError(`there is no cart for user ${req.loggedUser.userId}`, 404));
+    }
+
+    const itemIndex = cart.cartItems.findIndex(I => I.product == req.params.itemId && I.color == color);
+    if (itemIndex > -1) {
+        const cartItem = cart.cartItems[itemIndex];
+        cartItem.quantity = quantity;
+        cart.cartItems[itemIndex] = cartItem;
+    } else {
+        return res.status(404).json(`there is no item for this id :${req.params.itemId}`)
+    }
+
+    calcCartTotalPrice(cart);
+    await cart.save();
+    res.status(200).json({status: 'success',numOfCartItems: cart.cartItems.length,data: cart});
 })
 
 const removeFromCart = asyncHandler(async (req,res)=>{

@@ -27,4 +27,11 @@ const cartSchema = new mongoose.Schema({
 },{ timestamps: true }
 );
 
+
+cartSchema.pre(/^find/,function(next){
+    this.populate([{path:'user',select:'name'},{path:'coupon',select:'title discount'}])
+    next()
+})
+
+
 module.exports = mongoose.model('Cart', cartSchema);

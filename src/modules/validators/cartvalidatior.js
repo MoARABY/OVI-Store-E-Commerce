@@ -18,8 +18,14 @@ const createCartValidator = [
     ,validatorMiddleware
 ]
 
-const checkIdValidator = [
-    check('id').isMongoId().withMessage('Invalid Brand id format'),
+const removeFromCartValidator = [
+    check('itemId').isMongoId().withMessage('Invalid product id format')
+    .custom(async(val)=>{
+        const item = await productModel.findById(val)
+        if(!item) {
+            throw new apiError('product not found',404)
+        }
+    }),
     validatorMiddleware
 ]
 
@@ -33,4 +39,4 @@ const updateBrandValidator = [
     validatorMiddleware
 ]
 
-module.exports = {createCartValidator,checkIdValidator,updateBrandValidator}
+module.exports = {createCartValidator,removeFromCartValidator,updateBrandValidator}

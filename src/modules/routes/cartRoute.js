@@ -1,5 +1,5 @@
-const {getLoggedUserCart,addToCart,removeFromCart,clearCart} = require('../controllers/cartController')
-const {createCartValidator,checkIdValidator,updateBrandValidator} = require('../validators/cartvalidatior')
+const {getLoggedUserCart,addToCart,updateCart,removeFromCart,clearCart,applyCoupon} = require('../controllers/cartController')
+const {createCartValidator,removeFromCartValidator,updateBrandValidator} = require('../validators/cartvalidatior')
 const {verifyRole} = require('../../guards/isAuthorized')
 const router = require('express').Router()
 
@@ -7,7 +7,11 @@ const router = require('express').Router()
 router.route('/').get(verifyRole('user'),getLoggedUserCart)
 .post(verifyRole('user'),createCartValidator,addToCart)
 .delete(verifyRole('user'),clearCart)
-router.route('/:id').delete(verifyRole('user'),removeFromCart)
+.put(verifyRole('user'),applyCoupon)
+
+router.route('/:itemId').delete(verifyRole('user'),removeFromCartValidator,removeFromCart)
+router.route('/:id').put(verifyRole('user'),updateCart)
+
 
 
 module.exports = router

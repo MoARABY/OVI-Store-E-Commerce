@@ -12,7 +12,7 @@ const calcCartTotalPrice = (cart)=>{
         totalPrice += item.price * item.quantity
     })
     cart.totalCartPrice = totalPrice
-    cart.totalPriceAfterDiscount = undefined
+    cart.totalPriceAfterDiscount = totalPrice
     return cart
 }
 
@@ -105,7 +105,6 @@ const applyCoupon = asyncHandler(async(req,res)=>{
     const cart = await cartModel.findOne({user:req.loggedUser.userId})
     let totalPrice = cart.totalCartPrice
     let totalPriceAfterDiscount = totalPrice - (totalPrice * coupon.discount / 100)
-
     if(cart.coupon){
         return res.status(400).json({message: 'Coupon already applied'})
     }

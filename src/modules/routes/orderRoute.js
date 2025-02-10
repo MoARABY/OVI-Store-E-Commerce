@@ -5,10 +5,10 @@ const router = require('express').Router()
 
 
 router.get('/',verifyRole('admin'),getOrders)
-router.post('/',verifyRole('user'),createBrandValidator,createOrder)
-router.get('/my-orders',verifyRole('user'),checkIdValidator,getLoggedUserOrders)
-router.put('/:id',verifyRole('admin','manager'),updateBrandValidator,updateOrderStatus)
-router.get('/checkout-session',verifyRole('admin','manager'),updateBrandValidator,checkOutSession)
+router.post('/',verifyRole('user'),createOrder)
+router.get('/my-orders',verifyRole('user'),getLoggedUserOrders)
+router.put('/:id',verifyRole('admin','manager'),updateOrderStatus)
+router.get('/checkout-session',verifyRole('admin','manager'),checkOutSession)
 
 
 

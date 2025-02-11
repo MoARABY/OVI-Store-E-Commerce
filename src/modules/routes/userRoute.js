@@ -87,100 +87,6 @@ router.route('/').get(verifyRole('admin', 'manager'),getUsers);
  */
 router.route('/').post(createUserValidator,verifyRole('admin'), createUser);
 
-/**
- * @swagger
- * /users/{id}:
- *   get:
- *     summary: Get a user by ID (Admin only)
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
- *     responses:
- *       200:
- *         description: User details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Invalid ID
- *       403:
- *         description: Forbidden
- *       404:
- *         description: User not found
- */
-router.route('/:id').get(getUserValidator,verifyRole('admin', 'manager'), getUser);
-
-/**
- * @swagger
- * /users/{id}:
- *   put:
- *     summary: Update a user by ID (Admin only)
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       200:
- *         description: User updated successfully
- *       400:
- *         description: Validation error
- *       403:
- *         description: Forbidden
- *       404:
- *         description: User not found
- */
-router.route('/:id').put(updateUserValidator,verifyRole('admin'), updateUser);
-
-/**
- * @swagger
- * /users/{id}:
- *   delete:
- *     summary: Delete a user by ID (Admin only)
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
- *     responses:
- *       200:
- *         description: User deleted successfully
- *       400:
- *         description: Invalid ID
- *       403:
- *         description: Forbidden
- *       404:
- *         description: User not found
- */
-router.route('/:id').delete(getUserValidator,verifyRole('admin',), deleteUser);
-
-
-
-
 
 // logged user
 /**
@@ -245,7 +151,7 @@ router.route('/:id').delete(getUserValidator,verifyRole('admin',), deleteUser);
  *       403:
  *         description: Forbidden
  */
-router.route('/profile').get(verifyRole('user'), getprofile);
+router.route('/profile').get(verifyRole('user','admin'), getprofile);
 
 /**
  * @swagger
@@ -269,7 +175,7 @@ router.route('/profile').get(verifyRole('user'), getprofile);
  *       403:
  *         description: Forbidden
  */
-router.route('/profile').put(verifyRole('user'), updateProfile);
+router.route('/profile').put(verifyRole('user','admin'), updateProfile);
 
 /**
  * @swagger
@@ -285,7 +191,7 @@ router.route('/profile').put(verifyRole('user'), updateProfile);
  *       403:
  *         description: Forbidden
  */
-router.route('/profile').delete(verifyRole('user'), deActivateLoggedUser);
+router.route('/profile').delete(verifyRole('user','admin'), deActivateLoggedUser);
 
 /**
  * @swagger
@@ -309,7 +215,7 @@ router.route('/profile').delete(verifyRole('user'), deActivateLoggedUser);
  *       403:
  *         description: Forbidden
  */
-router.route('/profile/change-password').put(verifyRole('user'), updateLoggedUserPassword);
+router.route('/profile/change-password').put(verifyRole('user','admin'), updateLoggedUserPassword);
 
 /**
  * @swagger
@@ -325,6 +231,100 @@ router.route('/profile/change-password').put(verifyRole('user'), updateLoggedUse
  *       403:
  *         description: Forbidden
  */
-router.route('/profile/activate').put(verifyRole('user'), activateLoggedUser);
+router.route('/profile/activate').put(verifyRole('user','admin'), activateLoggedUser);
+
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Get a user by ID (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid ID
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+router.route('/:id').get(verifyRole('admin', 'manager'), getUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Update a user by ID (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Validation error
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+router.route('/:id').put(updateUserValidator,verifyRole('admin'), updateUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       400:
+ *         description: Invalid ID
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+router.route('/:id').delete(getUserValidator,verifyRole('admin',), deleteUser);
+
+
 
 module.exports = router

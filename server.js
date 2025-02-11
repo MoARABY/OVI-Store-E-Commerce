@@ -53,6 +53,11 @@ app.get('/',(req,res)=>{
 app.get('/api/v1/',(req,res)=>{
     res.json("welcome to OVI store home Page 📱")
 })
+
+// swagger
+const swaggerSetup = require('./swagger');  
+swaggerSetup(app);
+
 app.all('*',(req,res)=>{
     res.status(404).json({status:'fail',msg:'page not found'})
 })

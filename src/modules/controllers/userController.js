@@ -33,5 +33,53 @@ const deleteUser = asyncHandler(async(req,res)=>{
     user ? res.status(201).json({msg:'user deleted successfully'}) : res.status(400).json({msg:'cannot find user'})
 })
 
-module.exports = {createUser,getUser,getUsers,updateUser,deleteUser}
+
+
+// logged user
+
+const getprofile = asyncHandler(async (req,res)=>{
+    req.params.id = req.loggedUser.userId
+    getUser(req,res)
+})
+
+const updateProfile = asyncHandler(async (req,res)=>{
+    req.params.id = req.loggedUser.userId
+    updateUser(req,res)
+})
+
+const updateLoggedUserPassword = asyncHandler(async (req,res)=>{
+    const {userId} = req.loggedUser
+    const {password} = req.body
+    const user = await userModel.findById(userId)
+    if(user) {
+        user.password = password
+        user.passwordChangedAt = Date.now()
+        await user.save()
+
+    JWT.sign({userId:user._id,email:user.email,role:user.role},process.env.JWT_SECRET_KEY,{expiresIn:process.env.JWT_EXPIRE_DATE},(err,token)=>{
+        res.status(200).json({msg:'Password changed successfully',user,token})
+    })
+    } else {
+        res.status(404).json({message:'User not found'})    
+    }
+})
+
+const deActivateLoggedUser = asyncHandler(async (req,res)=>{
+    req.params.id = req.loggedUser.userId
+    deleteUser(req,res)
+})
+
+const activateLoggedUser = asyncHandler(async (req,res)=>{
+    const user = await userModel.findById(req.loggedUser.userId)
+    if(user) {
+        user.isActivated = true
+        await user.save()
+        res.status(200).json('user Activated successfully')
+    } else {
+        res.status(404).json({message:'User not found'})    
+    }
+})
+
+
+module.exports = {createUser,getUser,getUsers,updateUser,deleteUser,getprofile,updateProfile,updateLoggedUserPassword,deActivateLoggedUser,activateLoggedUser}
 

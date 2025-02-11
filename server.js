@@ -47,6 +47,9 @@ app.post(
     express.raw({ type: 'application/json' }),
     webhookCheckout
 );
+app.get('/',(req,res)=>{
+    res.status(200).json('welcome to test endPoint')
+})
 app.get('/api/v1/',(req,res)=>{
     res.json("welcome to OVI store home Page 📱")
 })
@@ -62,3 +65,15 @@ app.listen(PORT,()=>{
     console.log(`server start listning at port ${PORT}`)
     dbConnection()
 })
+
+
+process.on('unhandledRejection', (err) => {
+    console.error(`UnhandledRejection Errors: ${err.name} | ${err.message}`);
+    server.close(() => {
+        console.error(`Shutting down....`);
+        process.exit(1);
+    });
+});
+
+module.exports = app
+

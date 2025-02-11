@@ -8,7 +8,9 @@ router.get('/',verifyRole('admin'),getOrders)
 router.post('/',verifyRole('user'),createOrder)
 router.get('/my-orders',verifyRole('user'),getLoggedUserOrders)
 router.put('/:id',verifyRole('admin','manager'),updateOrderStatus)
-router.get('/checkout-session',verifyRole('admin','manager'),checkOutSession)
+router.get('/checkout-session',verifyRole('user'),checkOutSession)
+router.route('/create-card-order').post(verifyRole('user'), createCardOrder)
+router.route('/webhook-session').post(webhookCheckout)
 
 
 

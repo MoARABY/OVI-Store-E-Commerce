@@ -6,7 +6,6 @@ const asyncHandler = require('express-async-handler')
 
 
 const calcCartTotalPrice = (cart)=>{
-
     let totalPrice = 0
     cart.cartItems.forEach((item)=>{
         totalPrice += item.price * item.quantity
@@ -20,12 +19,12 @@ const addToCart  = asyncHandler(async (req,res)=>{
     const {product,color,quantity,price} = req.body
 
     // cart exist or not
-    const cart = await cartModel.findOne({user:req.loggedUser.userId})
+    let cart = await cartModel.findOne({user:req.loggedUser.userId})
 
     //  A)
     if (!cart) {
-        const newCart = await cartModel.create({user:req.loggedUser.userId,cartItems:[{product,quantity,color,price}]})
-        return res.status(201).json({msg:'product added to cart successfully',newCart})
+        cart = await cartModel.create({user:req.loggedUser.userId,cartItems:[{product,quantity,color,price}]})
+        // return res.status(201).json({msg:'product added to cart successfully',cart})
     //  B)
     } else {
         // product exist or not
@@ -41,8 +40,8 @@ const addToCart  = asyncHandler(async (req,res)=>{
     
     // apply calc total cart price
     calcCartTotalPrice(cart)
-    const updatedCart = await cart.save()
-    updatedCart ? res.status(201).json({msg:'product added to cart successfully',updatedCart}) : res.status(400).json({message: 'Cart creation failed'})
+    await cart.save()
+    cart ? res.status(201).json({msg:'product added to cart successfully',cart}) : res.status(400).json({message: 'Cart creation failed'})
 })
 
 const getLoggedUserCart = asyncHandler(async (req,res)=>{    

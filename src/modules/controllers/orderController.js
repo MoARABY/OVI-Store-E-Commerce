@@ -8,6 +8,8 @@ const ApiFeatures = require('../../utils/apiFeatures')
 
 
 
+
+// implement cash order operations
 const createOrder = asyncHandler(async (req, res) => {
     let taxPrice = 0
     let shippingPrice = 0
@@ -85,15 +87,56 @@ const updateOrderStatus  = asyncHandler(async (req, res) => {
 })
 
 
-const checkOutSession  = asyncHandler(async (req, res) => {
-    
-})
 
+
+
+// implement card order operations
 const createCardOrder  = asyncHandler(async (req, res) => {
     
 })
 
+const checkOutSession  = asyncHandler(async (req, res) => {
+
+    // get order total price
+    let taxPrice = 0
+    let shippingPrice = 0
+    const cart = await cartModel.findOne({ user: req.loggedUser.userId })
+    if (!cart) {
+        res.status(400).json({ msg: 'Cart not found' })
+    }
+    let cartPrice = 0
+    cart.coupon ? cartPrice = +cart.totalPriceAfterDiscount : cartPrice = +cart.totalCartPrice
+    let totalOrderPrice = cartPrice + taxPrice + shippingPrice
+
+    // start create stripe session
+    console.log(req.loggedUser)
+    const session = await stripe.checkout.sessions.create({
+        line_items: [{
+            price_data: {
+                currency: 'egp',
+                product_data: {
+                    name: req.loggedUser.name,
+                },
+                unit_amount: totalOrderPrice * 100,
+            },
+            quantity: 1,
+        },
+    ],
+    mode: 'payment',
+    success_url: `${req.protocol}://${req.get('host')}/api/v1/orders`,
+    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/cart`,
+    client_reference_id: cart._id.toString(),
+    customer_email: req.loggedUser.email,
+    metadata: req.body.shippingAddress,
+    });
+    session ? res.status(200).json({session}) : res.status(400).json({msg: 'Session not created'})
+})
+
+
 const webhookCheckout  = asyncHandler(async (req, res) => {
 
 })
+
+
+
 module.exports = {createOrder, getOrders, getLoggedUserOrders,updateOrderStatus, checkOutSession, createCardOrder, webhookCheckout}

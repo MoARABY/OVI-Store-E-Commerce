@@ -17,15 +17,19 @@ if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-
 const dbConnection = require('./DB/dbConnection')
 const globalError = require('./src/middlewares/errorMiddleware')
 const mountRoute = require('./src/modules/routes/mountRoute')
+const webhookCheckout = require('./src/modules/controllers/orderController')
 
 
 
 mountRoute(app)
-
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    webhookCheckout
+);
 app.get('/api/v1/',(req,res)=>{
     res.json("welcome to OVI store home Page 📱")
 })

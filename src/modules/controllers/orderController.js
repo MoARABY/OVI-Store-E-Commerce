@@ -91,8 +91,33 @@ const updateOrderStatus  = asyncHandler(async (req, res) => {
 
 
 // implement card order operations
-const createCardOrder  = asyncHandler(async (req, res) => {
-    
+const createOnlineOrder  = asyncHandler(async (session) => {
+    const cartId = session.client_reference_id;
+    const shippingAddress = session.metadata;
+    const orderPrice = session.amount_total / 100;
+
+    const cart = await cartModel.findById(cartId);
+    const user = await userModel.findOne({ email: session.customer_email });
+
+    const order = await orderModel.create({
+        user: user._id,
+        cartItems: cart.cartItems,
+        shippingAddress,
+        totalOrderPrice: orderPrice,
+        isPaid: true,
+        paidAt: Date.now(),
+        paymentMethodType: 'card',
+    });
+    if (order) {
+        const bulkOption = cart.cartItems.map((item) => ({
+        updateOne: {
+            filter: { _id: item.product },
+            update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        },
+    }));
+        await productModel.bulkWrite(bulkOption, {});
+        await cartModel.findByIdAndDelete(cart._id);
+    }
 })
 
 const checkOutSession  = asyncHandler(async (req, res) => {
@@ -109,7 +134,6 @@ const checkOutSession  = asyncHandler(async (req, res) => {
     let totalOrderPrice = cartPrice + taxPrice + shippingPrice
 
     // start create stripe session
-    console.log(req.loggedUser)
     const session = await stripe.checkout.sessions.create({
         line_items: [{
             price_data: {
@@ -134,7 +158,22 @@ const checkOutSession  = asyncHandler(async (req, res) => {
 
 
 const webhookCheckout  = asyncHandler(async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+    try {
+        event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    if (event.type === 'checkout.session.completed') {
+        createOnlineOrder(event.data.object);
+    }
 
+    res.status(200).json({ received: true });
 })
 
 

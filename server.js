@@ -1,13 +1,21 @@
 const express = require('express')
 const app = express()
 const cookieParser = require('cookie-parser');
+const cors = require('cors')
+const compression = require('compression')
 require('dotenv').config()
 
 
-
+app.use(cors())
+app.options('*',cors())
+app.use(compression())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true  }));
 app.use(cookieParser());
+
+if(process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
 
 
 const dbConnection = require('./DB/dbConnection')

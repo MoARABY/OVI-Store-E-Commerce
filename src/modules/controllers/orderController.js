@@ -178,4 +178,4 @@ const webhookCheckout  = asyncHandler(async (req, res) => {
 
 
 
-module.exports = {createOrder, getOrders, getLoggedUserOrders,updateOrderStatus, checkOutSession, createCardOrder, webhookCheckout}
+module.exports = {createOrder, getOrders, getLoggedUserOrders,updateOrderStatus, checkOutSession, createOnlineOrder, webhookCheckout}

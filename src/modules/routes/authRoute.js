@@ -4,14 +4,15 @@ const {signUp,sendOTP,verifyOTP,logIn,forgotPassword,resetPassword,verifyResetCo
 const {createUserValidator} = require('../validators/userValidator')
 const {verifyRole} = require('../../guards/isAuthorized')
 const verifyToken = require('../../middlewares/verifyToken')
+const limiter = require('../../middlewares/rateLimiter')
 
 
-router.post('/signup',createUserValidator,signUp)
-router.post('/send-otp',verifyToken,sendOTP)
-router.post('/verify-otp',verifyToken,verifyOTP)
-router.post('/login',logIn)
-router.post('/forgot-password',verifyToken,forgotPassword)
-router.post('/verify-reset-code',verifyToken,verifyResetCode)
-router.post('/reset-password',verifyToken,resetPassword)
+router.post('/signup',limiter,createUserValidator,signUp)
+router.post('/send-otp',verifyRole('user'),sendOTP)
+router.post('/verify-otp',verifyRole('user'),verifyOTP)
+router.post('/login',limiter,logIn)
+router.post('/forgot-password',verifyRole('admin','user'),forgotPassword)
+router.post('/verify-reset-code',verifyRole('admin','user'),verifyResetCode)
+router.post('/reset-password',verifyRole('admin','user'),resetPassword)
 
 module.exports = router

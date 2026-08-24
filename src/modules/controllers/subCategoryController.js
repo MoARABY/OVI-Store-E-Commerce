@@ -7,13 +7,13 @@ const ApiFeatures = require('../../utils/apiFeatures')
 
 const createSubCategory = asyncHandler(async (req,res)=>{
     const subCategory = await subCategoryModel.create(req.body)
-    subCategory ? res.status(201).json({msg:'subCategory created successfully',subCategory}) : res.status(400).json({msg:'subCategory not created'})
+    subCategory ? res.status(201).json({status:'success',message:'subCategory created successfully',data:subCategory}) : res.status(400).json({status:'fail',message:'subCategory not created'})
 })
 
 const getSubCategory = asyncHandler(async (req,res)=>{
     const {id}  =req.params
     const subCategory = await subCategoryModel.findById(id)
-    subCategory ? res.status(201).json(subCategory) : res.status(400).json({msg:'subCategory not founded'})
+    subCategory ? res.status(201).json({status:'success',message:'subCategory found',data:subCategory}) : res.status(404).json({status:'fail',message:'subCategory not found'})
 })
 
 const getSubCategories = asyncHandler(async (req,res)=>{
@@ -32,19 +32,19 @@ const getSubCategories = asyncHandler(async (req,res)=>{
     const {mongooseQuery,paginateFeatures } = apiFeatures
 
     const subCategories = await mongooseQuery
-    subCategories ? res.status(201).json({length:subCategories.length,paginateFeatures,Data:subCategories}) : res.status(400).json({msg:'no subCategory founded'})
+    subCategories.length > 0 ? res.status(201).json({status:'success',message:'subCategories found',length:subCategories.length,paginateFeatures,data:subCategories}) : res.status(404).json({status:'fail',message:'no subCategories found'})
 })
 
 const updateSubCategory = asyncHandler(async (req,res)=>{
     const {id}  = req.params
     const subCategory = await subCategoryModel.findByIdAndUpdate(id,req.body,{new:true})
-    subCategory ? res.status(201).json({msg:'subCategory updated successfully',subCategory}) : res.status(400).json({msg:'subCategory not founded'})
+    subCategory ? res.status(201).json({status:'success',message:'subCategory updated successfully',data:subCategory}) : res.status(404).json({status:'fail',message:'subCategory not found'})
 })
 
 const deleteSubCategory = asyncHandler(async (req,res)=>{
     const {id}  =req.params
     const subCategory = await subCategoryModel.findByIdAndDelete(id,req.body,{new:true})
-    subCategory ? res.status(201).json({msg:'subCategory deleted successfully'}) : res.status(400).json({msg:'subCategory not founded'})
+    subCategory ? res.status(201).json({status:'success',message:'subCategory deleted successfully'}) : res.status(404).json({status:'fail',message:'subCategory not found'})
 })
 
 

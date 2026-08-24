@@ -30,7 +30,7 @@ const getProducts = asyncHandler(async(req,res)=>{
     const {mongooseQuery,paginateFeatures } = apiFeatures
 
     const products = await mongooseQuery
-    products ? res.status(200).json({status:'success',message:'products found',length:products.length,paginateFeatures,Data:products}) : res.status(400).json({status:'fail',message:'cannot find products'})
+    products ? res.status(200).json({status:'success',message:'products found',length:products.length,paginateFeatures,data:products}) : res.status(400).json({status:'fail',message:'cannot find products'})
 })
 
 const updateProduct = asyncHandler(async(req,res)=>{

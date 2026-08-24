@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         default:'user'
     },
     isActive : {
-        type:String,
+        type: Boolean,
         default:true
     },
     passwordChangedAt : Date,
@@ -45,7 +45,10 @@ const userSchema = new mongoose.Schema({
     ],
     addresses: [
         {
-            id: { type: mongoose.Schema.Types.ObjectId },
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                default: () => new mongoose.Types.ObjectId()
+            },
             alias: String,
             details: String,
             phone: String,

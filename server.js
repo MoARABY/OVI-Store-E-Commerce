@@ -49,10 +49,10 @@ if(process.env.NODE_ENV === 'development') {
 
 mountRoute(app)
 app.get('/',(req,res)=>{
-    res.status(200).json('welcome to test endPoint')
+    res.status(200).json({status:'success',msg:'welcome to OVI store home Page 📱'})
 })
 app.get('/api/v1/',(req,res)=>{
-    res.json("welcome to OVI store home Page 📱")
+    res.json({status:'success',msg:'welcome to OVI store API home Page 📱'})
 })
 
 // swagger
@@ -60,7 +60,7 @@ const swaggerSetup = require('./swagger');
 swaggerSetup(app);
 
 app.all('*',(req,res)=>{
-    res.status(404).json({status:'fail',msg:'page not found'})
+    res.status(404).json({status:'fail',message:`can't find ${req.originalUrl} on this server`})
 })
 app.use(globalError)
 

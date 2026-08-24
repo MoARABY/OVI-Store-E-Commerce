@@ -9,6 +9,17 @@ const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean')
 require('dotenv').config()
 
+const dbConnection = require('./DB/dbConnection')
+const globalError = require('./src/middlewares/errorMiddleware')
+const mountRoute = require('./src/modules/routes/mountRoute')
+const {webhookCheckout} = require('./src/modules/controllers/orderController')
+
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    webhookCheckout
+);
+
 
 app.use(cors())
 app.options('*',cors())
@@ -34,19 +45,9 @@ if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-const dbConnection = require('./DB/dbConnection')
-const globalError = require('./src/middlewares/errorMiddleware')
-const mountRoute = require('./src/modules/routes/mountRoute')
-const {webhookCheckout} = require('./src/modules/controllers/orderController')
-
 
 
 mountRoute(app)
-app.post(
-    '/webhook-checkout',
-    express.raw({ type: 'application/json' }),
-    webhookCheckout
-);
 app.get('/',(req,res)=>{
     res.status(200).json('welcome to test endPoint')
 })
@@ -66,7 +67,7 @@ app.use(globalError)
 
 
 const PORT = process.env.PORT || 8000
-app.listen(PORT,()=>{
+const server = app.listen(PORT,()=>{
     console.log(`server start listning at port ${PORT}`)
     dbConnection()
 })

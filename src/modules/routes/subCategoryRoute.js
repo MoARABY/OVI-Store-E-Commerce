@@ -57,7 +57,7 @@ const router = require('express').Router({mergeParams:true})
  *       403:
  *         description: Forbidden
  */
-router.get('/', verifyRole('admin', 'user'), getSubCategories);
+router.get('/', getSubCategories);
 
 /**
  * @swagger
@@ -120,7 +120,7 @@ router.post('/', verifyRole('admin', 'manager'), setCategoryIdValue, upload.sing
  *       404:
  *         description: Subcategory not found
  */
-router.get('/:id', verifyRole('user'), checkIdValidator, getSubCategory);
+router.get('/:id', checkIdValidator, getSubCategory);
 
 /**
  * @swagger

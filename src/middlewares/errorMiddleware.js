@@ -11,16 +11,16 @@ const globalError = (err,req,res,next)=>{
 
 const developmentError = (err,res)=>{
     return res.status(err.statusCode).json({
-        message:err.message,
         status:err.status,
+        message:err.message,
         stack:err.stack,
         trace:err.trace
     })
 }
 const productionError = (err,res)=>{
     return res.status(err.statusCode).json({
-        message:err.message,
         status:err.status,
+        message:err.message
     })
 }
 

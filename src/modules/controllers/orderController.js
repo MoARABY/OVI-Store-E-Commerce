@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
+const userModel = require('../../../DB/models/userModel')
 const orderModel = require('../../../DB/models/orderModel')
 const cartModel = require('../../../DB/models/cartModel')
 const productModel = require('../../../DB/models/productModel')
@@ -127,7 +128,7 @@ const checkOutSession  = asyncHandler(async (req, res) => {
     let shippingPrice = 0
     const cart = await cartModel.findOne({ user: req.loggedUser.userId })
     if (!cart) {
-        res.status(400).json({ msg: 'Cart not found' })
+        return res.status(400).json({ msg: 'Cart not found' })
     }
     let cartPrice = 0
     cart.coupon ? cartPrice = +cart.totalPriceAfterDiscount : cartPrice = +cart.totalCartPrice

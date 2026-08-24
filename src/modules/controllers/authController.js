@@ -1,6 +1,6 @@
 const userModel = require('../../../DB/models/userModel')
 const asyncHandler = require('express-async-handler')
-const sendSMS = require('../../utils/sendOTP')
+// const sendSMS = require('../../utils/sendOTP')
 const sendEmails = require('../../utils/sendEmails')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
@@ -10,45 +10,46 @@ require('dotenv').config()
 
 
 const signUp = asyncHandler(async(req,res)=>{
-    const user = await userModel.create(req.body)
-    const {password,...others} = user._doc
-    user ? res.status(201).json({msg:'user created successfully',others}) : res.status(400).json({msg:'user not created'})
+    const {name, email, phone ,password} = req.body
+    const user = await userModel.create({name, email, phone ,password})
+    const {password:Pass, ...others} = user._doc
+    user ? res.status(201).json({status:'Success',message:'user created successfully',data:others}) : res.status(400).json({status:'Fail',message:'user not created'})
 })
 
-const sendOTP = asyncHandler(async(req,res)=>{
-    const {phone} = req.body
-    const user = await userModel.findOne({phone})
-    if(!user) return res.status(400).json('invalid phone number')
+// const sendOTP = asyncHandler(async(req,res)=>{
+//     const {phone} = req.body
+//     const user = await userModel.findOne({phone})
+//     if(!user) return res.status(400).json({status:'Fail',message:'invalid phone number'})
 
-    const verifyCode = Math.floor(100000 + Math. random() * 900000).toString()
-    const hashedVerifyCode = crypto.createHash('sha256').update(verifyCode).digest('hex')
-    user.phoneVerifyCode = hashedVerifyCode
-    user.phoneVerifyCodeExpires = Date.now() + (10 * 60 *1000)
-    user.phoneVerifyCodeVerified = false
-    await user.save()
+//     const verifyCode = Math.floor(100000 + Math. random() * 900000).toString()
+//     const hashedVerifyCode = crypto.createHash('sha256').update(verifyCode).digest('hex')
+//     user.phoneVerifyCode = hashedVerifyCode
+//     user.phoneVerifyCodeExpires = Date.now() + (10 * 60 *1000)
+//     user.phoneVerifyCodeVerified = false
+//     await user.save()
 
-    try {
-        sendSMS(phone, `Your verification code is: ${verifyCode}`)
-    } catch (err) {
-        user.phoneVerifyCode = undefined;
-        user.phoneVerifyCodeExpires = undefined;
-        user.phoneVerifyCodeVerified = undefined;
-        await user.save();
-        return res.status(400).json({ status: 'fail', message: 'SMS did not sent' })
-    }
-    res.status(200).json({ status: 'Success', message: 'SMS send successfully' });
-})
+//     try {
+//         sendSMS(phone, `Your verification code is: ${verifyCode}`)
+//     } catch (err) {
+//         user.phoneVerifyCode = undefined;
+//         user.phoneVerifyCodeExpires = undefined;
+//         user.phoneVerifyCodeVerified = undefined;
+//         await user.save();
+//         return res.status(400).json({ status: 'fail', message: 'SMS did not sent' })
+//     }
+//     res.status(200).json({ status: 'Success', message: 'SMS send successfully' });
+// })
 
-const verifyOTP = asyncHandler(async(req,res)=>{
-    const {verifyCode} = req.body
-    const hashedCode = crypto.createHash('sha256').update(verifyCode).digest('hex')
-    const user = await userModel.findOne({phoneVerifyCode:hashedCode,phoneVerifyCodeExpires:{$gt:Date.now()}})
-    if(!user) return res.status(404).json('Code Expired or Invalid')
+// const verifyOTP = asyncHandler(async(req,res)=>{
+//     const {verifyCode} = req.body
+//     const hashedCode = crypto.createHash('sha256').update(verifyCode).digest('hex')
+//     const user = await userModel.findOne({phoneVerifyCode:hashedCode,phoneVerifyCodeExpires:{$gt:Date.now()}})
+//     if(!user) return res.status(404).json('Code Expired or Invalid')
 
-        user.phoneVerifyCodeVerified = true
-        await user.save()
-        res.status(200).json({status:'Success',message:'phone number Verified'})
-})
+//         user.phoneVerifyCodeVerified = true
+//         await user.save()
+//         res.status(200).json({status:'Success',message:'phone number Verified'})
+// })
 
 const logIn = asyncHandler(async(req,res)=>{
     const {email,password} = req.body
@@ -58,15 +59,15 @@ const logIn = asyncHandler(async(req,res)=>{
         return res.status(400).json('Invalid email or password')
     }
     const token = jwt.sign({userId:user._id,name:user.name,email:user.email,role:user.role},process.env.JWT_SECRET_KEY,{expiresIn:process.env.JWT_EXPIRE_DATE})
-    if(!token) return res.status(400).json({message:"Token not generated"})
+    if(!token) return res.status(400).json({status:'fail',message:"Token not generated"})
         const {password:Pass, ...others} = user._doc
-        return res.cookie('token',token,{httpOnly:true}).status(200).json({token:token,...others})
+        return res.cookie('token',token,{httpOnly:true}).status(200).json({status:'Success',message:'user logged in successfully',data:{user:others,token}})
 })
 
 const forgotPassword = asyncHandler(async(req,res)=>{
     const {email} = req.body
     const user = await userModel.findOne({email})
-    if(!user) return res.status(400).json('Invalid email')
+    if(!user) return res.status(400).json({status:'fail',message:'Invalid email'})
         const resetCode = Math.floor(100000 + Math. random() * 900000).toString()
         const hashedCode = crypto.createHash('sha256').update(resetCode).digest('hex')
         user.passwordResetCode = hashedCode
@@ -120,4 +121,4 @@ const resetPassword = asyncHandler(async(req,res)=>{
 })
 
 
-module.exports = {signUp,sendOTP,verifyOTP,logIn,forgotPassword,resetPassword,verifyResetCode}
+module.exports = {signUp,logIn,forgotPassword,resetPassword,verifyResetCode}

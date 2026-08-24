@@ -20,6 +20,8 @@ const createUserValidator = [
         const user = await userModel.findOne({phone:val})
         if(user) throw new Error('Phone number already exists')
     })),
+
+    check('confirmPassword').notEmpty().withMessage('Please provide a confirm password'),
     
     check('password').notEmpty().withMessage('Please provide a password')
     .isLength({min:6}).withMessage('Password must be at least 6 characters long')
@@ -27,8 +29,6 @@ const createUserValidator = [
         if(val !== req.body.confirmPassword) throw new Error('Password and confirm password do not match')
         return true
     }),
-
-    check('confirmPassword').notEmpty().withMessage('Please provide a confirm password'),
     validatorMiddleware
 ]
 

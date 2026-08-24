@@ -53,7 +53,7 @@ const router = require('express').Router({mergeParams:true})
  *       403:
  *         description: Forbidden
  */
-router.get('/', verifyRole('user', 'admin'), getReviews);
+router.get('/', getReviews);
 
 /**
  * @swagger
@@ -108,7 +108,7 @@ router.post('/', verifyRole('user'), createReviewValidator, createReview);
  *       404:
  *         description: Review not found
  */
-router.get('/:id', verifyRole('user'), checkIdValdidator, getReview);
+router.get('/:id', checkIdValdidator, getReview);
 
 /**
  * @swagger

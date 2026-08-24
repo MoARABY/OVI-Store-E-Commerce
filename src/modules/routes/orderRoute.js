@@ -1,4 +1,4 @@
-const {createOrder, getOrders, getLoggedUserOrders,updateOrderStatus, checkOutSession, webhookCheckout} = require('../controllers/orderController')
+const {createOrder, getOrders, getLoggedUserOrders,updateOrderStatus, checkOutSession} = require('../controllers/orderController')
 const {verifyRole} = require('../../guards/isAuthorized')
 const router = require('express').Router()
 
@@ -174,34 +174,5 @@ router.put('/:id', verifyRole('admin', 'manager'), updateOrderStatus);
  *         description: Forbidden
  */
 router.get('/checkout-session', verifyRole('user'), checkOutSession);
-
-/**
- * @swagger
- * /orders/webhook-session:
- *   post:
- *     summary: Webhook for handling checkout session events
- *     tags: [Orders]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               event:
- *                 type: string
- *                 description: The event type (e.g., payment_succeeded, payment_failed)
- *               data:
- *                 type: object
- *                 description: The event data
- *     responses:
- *       200:
- *         description: Webhook processed successfully
- *       400:
- *         description: Invalid webhook payload
- */
-router.route('/webhook-session').post(webhookCheckout);
-
-
 
 module.exports = router

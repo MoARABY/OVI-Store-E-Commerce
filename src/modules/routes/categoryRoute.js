@@ -58,7 +58,7 @@ const router = require('express').Router()
  *       403:
  *         description: Forbidden
  */
-router.get('/', verifyRole('admin', 'user'), getCategories);
+router.get('/', getCategories);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.post('/', verifyRole('admin', 'manager'), upload.single('categoryImage'),
  *       404:
  *         description: Category not found
  */
-router.get('/:id', verifyRole('user'), checkIdValidator, getCategory);
+router.get('/:id', checkIdValidator, getCategory);
 
 /**
  * @swagger

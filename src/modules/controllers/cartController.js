@@ -54,7 +54,7 @@ const updateCart = asyncHandler(async(req,res)=>{
 
     const cart = await cartModel.findOne({ user: req.loggedUser.userId });
     if (!cart) {
-        return next(new ApiError(`there is no cart for user ${req.loggedUser.userId}`, 404));
+        return res.status(404).json({ message: 'Cart not found for this user' })
     }
 
     const itemIndex = cart.cartItems.findIndex(I => I.product == req.params.itemId && I.color == color);
@@ -63,7 +63,7 @@ const updateCart = asyncHandler(async(req,res)=>{
         cartItem.quantity = quantity;
         cart.cartItems[itemIndex] = cartItem;
     } else {
-        return res.status(404).json(`there is no item for this id :${req.params.itemId}`)
+        return res.status(404).json({message: `there is no item for this id :${req.params.itemId}`})
     }
 
     calcCartTotalPrice(cart);
@@ -81,17 +81,17 @@ const removeFromCart = asyncHandler(async (req,res)=>{
         cartItems: { $elemMatch: { product: req.params.itemId,color } }
     });
     if(!existItem) {
-        return res.status(201).json("cart does not contain this product") 
+        return res.status(400).json({message: "cart does not contain this product"})
     }
     const cart = await cartModel.findOneAndUpdate({user : req.loggedUser.userId},{$pull: { cartItems: { product: req.params.itemId ,color:req.body.color} }}, {new: true});
     calcCartTotalPrice(cart)
     await cart.save()
-    cart ? res.status(201).json("item removed Successfully from cart") : res.status(400).json({message: 'item not found'})
+    cart ? res.status(201).json({message:"item removed Successfully from cart"} ) : res.status(400).json({message: 'item not found'})
 })
 
 const clearCart  = asyncHandler(async (req,res)=>{
     const cart = await cartModel.findOneAndDelete({user : req.loggedUser.userId});
-    cart ? res.status(201).json("Cart Cleared Successfully") : res.status(400).json({message: 'Cart not found'})
+    cart ? res.status(201).json({message:"Cart Cleared Successfully"}) : res.status(400).json({message: 'Cart not found'})
 })
 
 const applyCoupon = asyncHandler(async(req,res)=>{

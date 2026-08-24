@@ -71,7 +71,7 @@ const router = require('express').Router()
  *       403:
  *         description: Forbidden
  */
-router.get('/', verifyRole('user', 'admin'), getProducts);
+router.get('/', getProducts);
 
 /**
  * @swagger
@@ -141,7 +141,7 @@ router.post('/', verifyRole('manager', 'admin'), upload.fields([{ name: 'images'
  *       404:
  *         description: Product not found
  */
-router.get('/:id', verifyRole('user'), checkIdValidator, getProduct);
+router.get('/:id', checkIdValidator, getProduct);
 
 /**
  * @swagger

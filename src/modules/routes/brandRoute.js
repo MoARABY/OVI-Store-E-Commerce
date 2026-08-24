@@ -56,7 +56,7 @@ const router = require('express').Router()
  *       403:
  *         description: Forbidden
  */
-router.get('/', verifyRole('user'), getBrands);
+router.get('/', getBrands);
 
 /**
  * @swagger
@@ -119,7 +119,7 @@ router.post('/', verifyRole('admin'), upload.single('brandImage'), setImageUrl, 
  *       404:
  *         description: Brand not found
  */
-router.get('/:id', verifyRole('user'), checkIdValidator, getBrand);
+router.get('/:id', checkIdValidator, getBrand);
 
 /**
  * @swagger

@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const {signUp,sendOTP,verifyOTP,logIn,forgotPassword,resetPassword,verifyResetCode} = require('../controllers/authController')
+const {signUp,logIn,forgotPassword,resetPassword,verifyResetCode} = require('../controllers/authController')
 const {createUserValidator} = require('../validators/userValidator')
 const {verifyRole} = require('../../guards/isAuthorized')
 const limiter = require('../../middlewares/rateLimiter')
@@ -68,7 +68,7 @@ router.post('/signup', limiter, createUserValidator, signUp);
  *       403:
  *         description: Forbidden
  */
-router.post('/send-otp', verifyRole('user'), sendOTP);
+// router.post('/send-otp', verifyRole('user'), sendOTP);
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.post('/send-otp', verifyRole('user'), sendOTP);
  *       400:
  *         description: Invalid OTP
  */
-router.post('/verify-otp', verifyRole('user'), verifyOTP);
+// router.post('/verify-otp', verifyRole('user'), verifyOTP);
 
 /**
  * @swagger

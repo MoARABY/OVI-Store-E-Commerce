@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler')
 
 
 
-const createProduct = asyncHandler(async(req,res)=>{
+const createProduct = asyncHandler(async(req,res)=>{ 
     const product = await productModel.create(req.body)
     product ? res.status(201).json({msg:'product created succesffully',product}) : res.status(400).json('can not create product')
 })

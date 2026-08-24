@@ -41,12 +41,12 @@ const addToCart  = asyncHandler(async (req,res)=>{
     // apply calc total cart price
     calcCartTotalPrice(cart)
     await cart.save()
-    cart ? res.status(201).json({msg:'product added to cart successfully',cart}) : res.status(400).json({message: 'Cart creation failed'})
+    cart ? res.status(201).json({status:'success',message:'product added to cart successfully',numOfCartItems: cart.cartItems.length,data:cart}) : res.status(400).json({status:'fail', message: 'Cart not found'})
 })
 
 const getLoggedUserCart = asyncHandler(async (req,res)=>{    
     const cart = await cartModel.find({user:req.loggedUser.userId})
-    cart ? res.status(201).json(cart) : res.status(400).json({message: 'Cart not found'})
+    cart ? res.status(201).json({status:'success',data:cart}) : res.status(400).json({status:'fail',message: 'Cart not found'})
 })
 
 const updateCart = asyncHandler(async(req,res)=>{
@@ -54,7 +54,7 @@ const updateCart = asyncHandler(async(req,res)=>{
 
     const cart = await cartModel.findOne({ user: req.loggedUser.userId });
     if (!cart) {
-        return res.status(404).json({ message: 'Cart not found for this user' })
+        return res.status(404).json({ status:'fail', message: 'Cart not found for this user' })
     }
 
     const itemIndex = cart.cartItems.findIndex(I => I.product == req.params.itemId && I.color == color);
@@ -63,55 +63,55 @@ const updateCart = asyncHandler(async(req,res)=>{
         cartItem.quantity = quantity;
         cart.cartItems[itemIndex] = cartItem;
     } else {
-        return res.status(404).json({message: `there is no item for this id :${req.params.itemId}`})
+        return res.status(404).json({status:'fail',message: `there is no item for this id :${req.params.itemId}`})
     }
 
     calcCartTotalPrice(cart);
     await cart.save();
-    res.status(200).json({status: 'success',numOfCartItems: cart.cartItems.length,data: cart});
+    res.status(200).json({status: 'success',message: 'Cart updated successfully', data: cart})
 })
 
 const removeFromCart = asyncHandler(async (req,res)=>{
     const {color} = req.body
     if(!color){
-        return res.status(400).json({message: 'Color is required'})
+        return res.status(400).json({status:'fail',message: 'Color is required'})
     }
     const existItem = await cartModel.findOne({
         user: req.loggedUser.userId,
         cartItems: { $elemMatch: { product: req.params.itemId,color } }
     });
     if(!existItem) {
-        return res.status(400).json({message: "cart does not contain this product"})
+        return res.status(400).json({status:'fail',message: "cart does not contain this product"})
     }
     const cart = await cartModel.findOneAndUpdate({user : req.loggedUser.userId},{$pull: { cartItems: { product: req.params.itemId ,color:req.body.color} }}, {new: true});
     calcCartTotalPrice(cart)
     await cart.save()
-    cart ? res.status(201).json({message:"item removed Successfully from cart"} ) : res.status(400).json({message: 'item not found'})
+    cart ? res.status(201).json({status:'success',message:"item removed Successfully from cart"} ) : res.status(400).json({status:'fail',message: 'item not found'})
 })
 
 const clearCart  = asyncHandler(async (req,res)=>{
     const cart = await cartModel.findOneAndDelete({user : req.loggedUser.userId});
-    cart ? res.status(201).json({message:"Cart Cleared Successfully"}) : res.status(400).json({message: 'Cart not found'})
+    cart ? res.status(201).json({status:'success',message:"Cart Cleared Successfully"}) : res.status(400).json({status:'fail',message: 'Cart not found'})
 })
 
 const applyCoupon = asyncHandler(async(req,res)=>{
 
     const coupon = await couponModel.findOne({name:req.body.coupon,expire:{$gte:Date.now()}})
     if(!coupon){
-        return res.status(400).json({message: 'Coupon invalid or expired'})
+        return res.status(400).json({status:'fail',message: 'Coupon invalid or expired'})
     }
 
     const cart = await cartModel.findOne({user:req.loggedUser.userId})
     let totalPrice = cart.totalCartPrice
     let totalPriceAfterDiscount = totalPrice - (totalPrice * coupon.discount / 100)
     if(cart.coupon){
-        return res.status(400).json({message: 'Coupon already applied'})
+        return res.status(400).json({status:'fail',message: 'Coupon already applied'})
     }
 
     cart.totalPriceAfterDiscount = totalPriceAfterDiscount
     cart.coupon = coupon._id
     const updatedCart = await cart.save()
-    updatedCart ? res.status(201).json(updatedCart) : res.status(400).json({message: 'Cart update failed'})
+    updatedCart ? res.status(201).json({status:'success',message:'Coupon applied successfully',data:updatedCart}) : res.status(400).json({status:'fail',message: 'Cart update failed'})
 })
 
 module.exports = {getLoggedUserCart,addToCart,updateCart,removeFromCart,clearCart,applyCoupon}
